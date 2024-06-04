@@ -21,10 +21,6 @@ namespace Hoho.Android.UsbSerial.Extensions
             return creator;
         }
 
-        public UsbSerialPortInfo()
-        {
-        }
-
         public UsbSerialPortInfo(UsbSerialPort port)
         {
             var device = port.Driver.Device;

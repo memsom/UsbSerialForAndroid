@@ -246,3 +246,5 @@ ModelManifest.xml
 
 #Zip files
 *.zip
+
+.idea/

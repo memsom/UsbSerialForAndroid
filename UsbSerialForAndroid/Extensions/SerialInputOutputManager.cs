@@ -14,7 +14,7 @@ using Hoho.Android.UsbSerial.Driver;
 
 namespace Hoho.Android.UsbSerial.Extensions
 {
-    public class SerialInputOutputManager : IDisposable
+    public class SerialInputOutputManager(UsbSerialPort port) : IDisposable
     {
         static readonly string TAG = typeof(SerialInputOutputManager).Name;
         const int READ_WAIT_MILLIS = 200;
@@ -24,27 +24,17 @@ namespace Hoho.Android.UsbSerial.Extensions
         const Parity DEFAULT_PARITY = Parity.None;
         const StopBits DEFAULT_STOPBITS = StopBits.One;
 
-        readonly UsbSerialPort port;
         byte[] buffer;
         CancellationTokenSource cancelationTokenSource;
         bool isOpen;
 
-        public SerialInputOutputManager(UsbSerialPort port)
-        {
-            this.port = port;
-            BaudRate = DEFAULT_BAUDRATE;
-            Parity = DEFAULT_PARITY;
-            DataBits = DEFAULT_DATABITS;
-            StopBits = DEFAULT_STOPBITS;
-        }
+        public int BaudRate { get; set; } = DEFAULT_BAUDRATE;
 
-        public int BaudRate { get; set; }
+        public Parity Parity { get; set; } = DEFAULT_PARITY;
 
-        public Parity Parity { get; set; }
+        public int DataBits { get; set; } = DEFAULT_DATABITS;
 
-        public int DataBits { get; set; }
-
-        public StopBits StopBits { get; set; }
+        public StopBits StopBits { get; set; } = DEFAULT_STOPBITS;
 
         public event EventHandler<SerialDataReceivedArgs> DataReceived;
 

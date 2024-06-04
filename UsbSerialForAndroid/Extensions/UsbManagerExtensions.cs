@@ -35,23 +35,25 @@ namespace Hoho.Android.UsbSerial.Util
 #else
             PendingIntentFlags pendingIntentFlags = Build.VERSION.SdkInt >= (BuildVersionCodes)31 ? (PendingIntentFlags).33554432 : 0;
 #endif
+            var intent = new Intent(ACTION_USB_PERMISSION);
+            // we need this for Android 34+ as apparently, security. If you follow Google's docs,
+            // you will spend a lot of time fighting with the API not actually replying with any
+            // useful data... because Immutable Intents *can;t* be changed, so the API is basically
+            // hobbled.
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake)
+            {
+                intent.SetPackage(context.PackageName);
+            }
 
-            var intent = PendingIntent.GetBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), pendingIntentFlags);
+            var pendingIntent = PendingIntent.GetBroadcast(context, 0, intent, pendingIntentFlags);
 
-            manager.RequestPermission(device, intent);
+            manager.RequestPermission(device, pendingIntent);
 
             return completionSource.Task;
         }
 
-        class UsbPermissionReceiver: BroadcastReceiver
+        class UsbPermissionReceiver(TaskCompletionSource<bool> completionSource) : BroadcastReceiver
         {
-            readonly TaskCompletionSource<bool> completionSource;
-
-            public UsbPermissionReceiver(TaskCompletionSource<bool> completionSource)
-            {
-                this.completionSource = completionSource;
-            }
-
             public override void OnReceive(Context context, Intent intent)
             {
                 var device = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;

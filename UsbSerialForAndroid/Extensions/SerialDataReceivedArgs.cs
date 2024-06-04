@@ -9,13 +9,8 @@ using System;
 
 namespace Hoho.Android.UsbSerial.Extensions
 {
-    public class SerialDataReceivedArgs : EventArgs
+    public class SerialDataReceivedArgs(byte[] data) : EventArgs
     {
-        public SerialDataReceivedArgs(byte[] data)
-        {
-            Data = data;
-        }
-
-        public byte[] Data { get; private set; }
+        public byte[] Data { get; private set; } = data;
     }
 }
