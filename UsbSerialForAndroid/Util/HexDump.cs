@@ -41,7 +41,18 @@ namespace Hoho.Android.UsbSerial.Util
                     {
                         if (line[j] > ' ' && line[j] < '~')
                         {
-                            result.Append(System.Text.Encoding.Default.GetString(line).Substring(j, 1));
+                            try
+                            {
+                                // this seems to throw every now an again...at least talking to an FTDI device
+                                result.Append(System.Text.Encoding.Default.GetString(line).Substring(j, 1));
+                            }
+                            catch (Exception e)
+                            {
+                                result.Append("#");
+                                System.Diagnostics.Debug.WriteLine(e.Message);
+                                System.Diagnostics.Debug.WriteLine(e.StackTrace);
+                            }
+
                         }
                         else
                         {

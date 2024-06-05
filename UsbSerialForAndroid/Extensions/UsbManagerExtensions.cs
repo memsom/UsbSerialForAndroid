@@ -27,7 +27,19 @@ namespace Hoho.Android.UsbSerial.Util
             var completionSource = new TaskCompletionSource<bool>();
 
             var usbPermissionReceiver = new UsbPermissionReceiver(completionSource);
-            context.RegisterReceiver(usbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+#pragma warning disable CA1416
+                //this is checking that it is API 26 or greater, bu the compiler doesn't see it that way. So we have to add in a pragma
+                context.RegisterReceiver(usbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION), ReceiverFlags.Exported);
+#pragma warning restore CA1416
+            }
+            else
+            {
+                context.RegisterReceiver(usbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+            }
+
 
             // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
 #if NET6_0_OR_GREATER
